@@ -20,5 +20,5 @@ int CropFaceBasedOnLeftEye(const Mat& src_image, const vector<float>& src_landma
 int SingalChannleImageDoG(const Mat& input_image, const Vec2d& vec_sigma, Mat& dog_image);
 int MultiChannalImageDoG(const Mat& input_image, const Vec2d& vec_sigma, vector<Mat>& vector_dog);
 int LBP(const vector<Mat>& vector_dog, vector<Mat>& vector_lbp);
-int LBP2Histogram(const vector<Mat>& vector_lbp, Mat& output_histogram);
+int LBP2Histogram(const vector<Mat>& vector_lbp, const vector<Mat>& vector_lpq, Mat& output_histogram);
 #endif

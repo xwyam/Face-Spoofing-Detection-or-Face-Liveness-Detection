@@ -123,7 +123,7 @@ int LBP(const vector<Mat>& vector_dog, vector<Mat>& vector_lbp){
   }
   return SUCCESS;
 }
-int LBP2Histogram(const vector<Mat>& vector_lbp, Mat& output_histogram) {
+int LBP2Histogram(const vector<Mat>& vector_lbp, const vector<Mat>& vector_lpq, Mat& output_histogram) {
   if (vector_lbp.empty()) {
 	cout << "the input image is empty" << endl;
 	return FAILURE;
@@ -135,6 +135,14 @@ int LBP2Histogram(const vector<Mat>& vector_lbp, Mat& output_histogram) {
       for (int col = 0; col < vector_lbp[i].cols; ++col) {
         bin = vector_lbp[i].at<uchar>(row, col);
         hist.at<float>(0, i * 256 + bin) += 1.0;
+      }
+    }
+  }
+  for (int i = 0; i < vector_lpq.size(); ++i) {
+    for (int row = 0; row < vector_lpq[i].rows; ++row) {
+      for (int col = 0; col < vector_lpq[i].cols; ++col) {
+        bin = vector_lpq[i].at<uchar>(row, col);
+        hist.at<float>(0, i * 256 + bin) + 1.0;
       }
     }
   }

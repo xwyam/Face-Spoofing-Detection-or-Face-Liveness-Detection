@@ -1,4 +1,5 @@
 #include"feature.h"
+#include"lpq.h"
 #include<iostream>
 #include<fstream>
 #include<opencv2/core/core.hpp>
@@ -61,6 +62,8 @@ void CreateFeature(const string& image_list, const string& src_folder,
   string line, image_path;
   Mat read_image;
   fid_image_list.open(image_list);
+  lpq::Ctx lpq_ctx;
+  lpq_ctx.setup();
   if (fid_image_list.is_open()) {
 	while (!fid_image_list.eof()) {
 	  fid_image_list >> line;
@@ -72,17 +75,18 @@ void CreateFeature(const string& image_list, const string& src_folder,
 		  normalize(read_image, read_image, 0, 255, NORM_MINMAX, CV_8UC3);
           Mat hsv_image;
           cvtColor(read_image, hsv_image, COLOR_RGB2HSV);
-          vector<Mat> vector_dog;
+          vector<Mat> vector_dog_hsv, vector_dog_ycbcr;
           for (int i = 0; i < vector_sigma.size(); ++i)
-            MultiChannalImageDoG(hsv_image, vector_sigma[i],vector_dog);
+            MultiChannalImageDoG(hsv_image, vector_sigma[i],vector_dog_hsv);
           Mat ycbcr_image;
           cvtColor(read_image, ycbcr_image, COLOR_RGB2YCrCb);
           for (int i = 0; i<vector_sigma.size();++i)
-            MultiChannalImageDoG(ycbcr_image, vector_sigma[i],vector_dog);
+            MultiChannalImageDoG(ycbcr_image, vector_sigma[i],vector_dog_ycbcr);
           vector<Mat> vector_lbp;
           LBP(vector_dog, vector_lbp);
+          vector<Mat> vector_lpq = lpq::lpq(vector_dog_ycbcr, lpq_ctx);
 		  Mat hist;
-		  LBP2Histogram(vector_lbp, hist);
+		  LBP2Histogram(vector_lbp, vector_lpq, hist);
 		  hist_temp.push_back(hist);
 		  if (line.find("attack") != string::npos) {
 			label_temp.push_back(Mat(1, 1, CV_32SC1, Scalar_<int>(-1)));//attack is labeled with -1
